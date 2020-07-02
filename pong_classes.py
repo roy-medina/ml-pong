@@ -1,15 +1,20 @@
 # Pong Classes
 import pygame as pg
+from csv import writer
+from sklearn.neighbors import KNeighborsRegressor
+import convert as Convert
+import numpy as np
 
-WIDTH = 1200
-HEIGHT = 600
+# Global Variables
+WIDTH = 2600
+HEIGHT = 1200
 BORDER = 20
-VELOCITY = 2
+VELOCITY = 10
 FRAMERATE = 120
 fgColor = pg.Color("white")
 bgColor = pg.Color("black")
-ballColor = pg.Color("blue")
-paddleColor = pg.Color("orange")
+ballColor = pg.Color(0, 255, 255)
+paddleColor = pg.Color(124,252,0)
 screen = pg.display.set_mode((WIDTH, HEIGHT))
 
 class Ball: 
@@ -47,17 +52,19 @@ class Ball:
 class Paddle:
     
     HEIGHT = 100
-    WIDTH = 20
+    WIDTH = 30
 
     def __init__(self, location):
         self.y = location
 
     def show(self, color):
-        pg.draw.rect(screen, color, pg.Rect(WIDTH-self.WIDTH, self.y-self.HEIGHT//2, self.WIDTH, self.HEIGHT))
+        global WIDTH
+        pad = pg.Rect(float(WIDTH - self.WIDTH), float(self.y - self.HEIGHT//2), float(self.WIDTH), float(self.HEIGHT))
+        pg.draw.rect(screen, color, pad)
 
-    def update(self):       # Add parameter (prediction) for ML
-        newY = pg.mouse.get_pos()[1]   # User Controlled
-        # newY = prediction               # ML Controlled
+    def update(self, prediction):       # Add parameter (, prediction) for ML
+        #newY = pg.mouse.get_pos()[1]   # User Controlled
+        newY = prediction               # ML Controlled
         if newY-self.HEIGHT//2 > BORDER and newY+self.HEIGHT//2 < HEIGHT - BORDER:
             self.show(bgColor)
             self.y = newY
