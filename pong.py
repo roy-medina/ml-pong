@@ -12,6 +12,7 @@ from pong_classes import *
 from ml_pong import *
 from run_time import import_csv
 from csv import writer
+from time import sleep
 import pygame as pg
 import random2 as rd
 import pandas as pd
@@ -61,20 +62,36 @@ from sklearn.neighbors import KNeighborsRegressor
 clf = KNeighborsRegressor(n_neighbors = 3)
 clf.fit(X,y)
 df = pd.DataFrame(columns = ['x', 'y', 'vx', 'vy'])
-df = clean_dataset(df, WIDTH-((right_paddle.WIDTH - 10)))
-
+df = clean_dataset(df, WIDTH-((right_paddle.WIDTH - 5)))
 
 # Initialize start time
 start_time = dt.datetime.now()
 print("Start Time: " + str(start_time))
 
+lives = -1
 #Keeps the game running until quit
 while True:
     e = pg.event.poll()
     if e.type == pg.QUIT:
         break
     elif ball.x >= WIDTH-((right_paddle.WIDTH - 10)):
-        break
+        if lives != 0:
+            ball.show(bgColor)  #Remove previous location
+            lives -= 1
+            sleep(1)
+            ball = Ball(WIDTH-Ball.RADIUS-Paddle.WIDTH, HEIGHT//2, -VELOCITY, -VELOCITY)
+            ball.show(ballColor)
+            end_time = dt.datetime.now()
+            print("End Time: " + str(end_time))
+            elapsed_time = (end_time - start_time).total_seconds()
+            print("Elapsed Time: " + str(elapsed_time) + " seconds.")
+            last_row = import_csv('run_time.csv')
+            time_content = [int(last_row) + 1, elapsed_time]
+            append_list_as_row('run_time.csv', time_content)
+            start_time = dt.datetime.now()
+            print("Start Time: " + str(start_time))
+        else:
+            break
 
     clock.tick(FRAMERATE)
    
