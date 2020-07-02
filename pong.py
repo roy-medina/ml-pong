@@ -58,10 +58,10 @@ y = pong['right_paddle.y']
 #Run ML
 
 from sklearn.neighbors import KNeighborsRegressor
-clf = KNeighborsRegressor(n_neighbors = 3)
+clf = KNeighborsRegressor(n_neighbors = 1000)
 clf.fit(X,y)
 df = pd.DataFrame(columns = ['x', 'y', 'vx', 'vy'])
-df = clean_dataset(df)
+df = clean_dataset(df, WIDTH-((right_paddle.WIDTH - 10)))
 
 # Initialize start time
 start_time = dt.datetime.now()

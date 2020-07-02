@@ -10,9 +10,10 @@ def append_list_as_row(file_name, list_of_elem):
         # Add contents of list as last row in the csv file
         csv_writer.writerow(list_of_elem)
 
-def clean_dataset(df):
+def clean_dataset(df, width_criteria):
     assert isinstance(df, pd.DataFrame)
     df.dropna(inplace=True)
+    df = df.drop(df[df.x > width_criteria].index)
     indices_to_keep = ~df.isin([np.nan, np.inf, -np.inf]).any(1)
     return df[indices_to_keep].astype(np.float64)
 
