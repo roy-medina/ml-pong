@@ -48,6 +48,27 @@ ball.show(ballColor)
 #Display paddle
 right_paddle.show(paddleColor)
 
+# Create data collection file for ML/ Check if data collection file is present, creates one if isn't
+if os.path.isfile("./pong_game.csv") == False:
+    sample = open("pong_game.csv", "w")
+    append_list_as_row("pong_game.csv", ['x','y','vx','vy','right_paddle.y'])
+
+#   Use data to teach ML
+
+pong = pd.read_csv("pong_game.csv")
+pong = clean_dataset(pong, WIDTH-((right_paddle.WIDTH - 5)))
+pong.to_csv("pong_game.csv", index = False)
+X = pong.drop(columns = 'right_paddle.y')
+y = pong['right_paddle.y']
+
+#Run ML
+
+from sklearn.neighbors import KNeighborsRegressor
+if MANUAL_RUN == False:
+    clf = KNeighborsRegressor(n_neighbors = 100)
+    clf.fit(X,y)
+    df = pd.DataFrame(columns = ['x', 'y', 'vx', 'vy'])
+
 # Initialize start time for Generation Tracking
 start_time = dt.datetime.now()
 print("Start Time: " + str(start_time))
@@ -89,8 +110,9 @@ while True:
    
     pg.display.flip()
 
-    toPredict = df.append({'x' : ball.x, 'y' : ball.y, 'vx' : ball.vx, 'vy' : ball.vy}, ignore_index = True)
-    MLposition = clf.predict(toPredict)
+    if MANUAL_RUN == False:
+        toPredict = df.append({'x' : ball.x, 'y' : ball.y, 'vx' : ball.vx, 'vy' : ball.vy}, ignore_index = True)
+        MLposition = clf.predict(toPredict)
 
     if MANUAL_RUN == True:
         right_paddle.update() #User controlled
