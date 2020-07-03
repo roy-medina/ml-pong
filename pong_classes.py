@@ -1,9 +1,5 @@
 # Pong Classes
 import pygame as pg
-from csv import writer
-from sklearn.neighbors import KNeighborsRegressor
-import convert as Convert
-import numpy as np
 
 # Global Variables
 WIDTH = 2600
@@ -11,6 +7,10 @@ HEIGHT = 1200
 BORDER = 20
 VELOCITY = 10
 FRAMERATE = 120
+#Determine if Manual(True) or AI(False)
+MANUAL_RUN = False
+# Allows for modifications of Lives
+LIVES = float('inf')
 fgColor = pg.Color("white")
 bgColor = pg.Color("black")
 ballColor = pg.Color(0, 255, 255)
@@ -62,12 +62,19 @@ class Paddle:
         pad = pg.Rect(float(WIDTH - self.WIDTH), float(self.y - self.HEIGHT//2), float(self.WIDTH), float(self.HEIGHT))
         pg.draw.rect(screen, color, pad)
 
-    def update(self, prediction):       # Add parameter (, prediction) for ML
-        #newY = pg.mouse.get_pos()[1]   # User Controlled
+    def update(self):       
+        newY = pg.mouse.get_pos()[1]   # User Controlled
+        if newY-self.HEIGHT//2 > BORDER and newY+self.HEIGHT//2 < HEIGHT - BORDER:
+            self.show(bgColor)
+            self.y = newY
+            self.show(paddleColor)
+
+    def updateML(self, prediction):       # Add parameter (, prediction) for ML
         newY = prediction               # ML Controlled
         if newY-self.HEIGHT//2 > BORDER and newY+self.HEIGHT//2 < HEIGHT - BORDER:
             self.show(bgColor)
             self.y = newY
             self.show(paddleColor)
+
 
 

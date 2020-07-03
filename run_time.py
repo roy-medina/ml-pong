@@ -1,8 +1,3 @@
-import time
-import datetime
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from matplotlib import style
 import csv
 
 # Obtain last index value of observation of ML data
@@ -17,6 +12,7 @@ def import_csv(csvfilename):
                 columns = [str(row_index), row[0], row[1]]
                 data.append(columns)
     return data[-1][1]
+
 
 
 

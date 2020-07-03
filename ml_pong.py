@@ -2,6 +2,26 @@ import pandas as pd
 import numpy as np
 from csv import writer
 
+# Create data collection file for ML/ Check if data collection file is present, creates one if isn't
+if os.path.isfile("./pong_game.csv") == False:
+    sample = open("pong_game.csv", "w")
+    append_list_as_row("pong_game.csv", ['x','y','vx','vy','right_paddle.y'])
+
+#   Use data to teach ML
+
+pong = pd.read_csv("pong_game.csv")
+pong = clean_dataset(pong, WIDTH-((right_paddle.WIDTH - 5)))
+pong.to_csv("pong_game.csv", index = False)
+X = pong.drop(columns = 'right_paddle.y')
+y = pong['right_paddle.y']
+
+#Run ML
+
+from sklearn.neighbors import KNeighborsRegressor
+clf = KNeighborsRegressor(n_neighbors = 250)
+clf.fit(X,y)
+df = pd.DataFrame(columns = ['x', 'y', 'vx', 'vy'])
+
 def append_list_as_row(file_name, list_of_elem):
     # Open file in append mode
     with open(file_name, 'a+', newline='') as write_obj:
@@ -13,6 +33,7 @@ def append_list_as_row(file_name, list_of_elem):
 def clean_dataset(df, width_criteria):
     assert isinstance(df, pd.DataFrame)
     df.dropna(inplace=True)
+    df = df.drop_duplicates()
     df = df.drop(df[df.x >= width_criteria].index)
     indices_to_keep = ~df.isin([np.nan, np.inf, -np.inf]).any(1)
     return df[indices_to_keep].astype(np.float64)
@@ -21,6 +42,8 @@ def clean_dataset(df, width_criteria):
 pong = pd.read_csv("pong_game.csv")
 pong.head()
 pong.describe()
+print(pong.head())
+print(pong.describe())
 pong = pong.drop_duplicates()
 pong.head()
 pong.describe()
